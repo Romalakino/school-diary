@@ -6,7 +6,8 @@
 <title>Электронный дневник</title>
 <style>
 body { font-family: 'Inter', sans-serif; margin: 0; background: #f4f7fb; color: #333; }
-header { background: linear-gradient(135deg, #4facfe, #00f2fe); padding: 1rem; text-align: center; color: white; font-size: 1.5rem; font-weight: bold; }
+header { background: linear-gradient(135deg, #4facfe, #00f2fe); padding: 1rem; text-align: center; color: white; font-size: 1.5rem; font-weight: bold; position: relative; }
+.edit-btn { position: absolute; right: 10px; top: 10px; background: black; color: white; border: none; border-radius: 50%; width: 35px; height: 35px; font-size: 20px; cursor: pointer; }
 .days { display: flex; overflow-x: auto; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 .day { min-width: 120px; padding: 0.7rem; text-align: center; font-weight: 600; border-bottom: 3px solid transparent; cursor: pointer; }
 .day.active { border-bottom: 3px solid #4facfe; color: #4facfe; }
@@ -18,14 +19,15 @@ header { background: linear-gradient(135deg, #4facfe, #00f2fe); padding: 1rem; t
 .modal-content { background: white; padding: 1rem; border-radius: 16px; width: 90%; max-height: 80%; overflow-y: auto; }
 input, textarea { width: 100%; padding: 0.5rem; margin: 0.5rem 0; border: 1px solid #ccc; border-radius: 8px; }
 .close-btn { background: #f44336; color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; float: right; }
-button { background: #4facfe; border: none; padding: 0.7rem 1.2rem; border-radius: 12px; color: white; font-weight: 600; cursor: pointer; margin: 0.3rem; }
+button.save-btn { background: #4facfe; border: none; padding: 0.7rem 1.2rem; border-radius: 12px; color: white; font-weight: 600; cursor: pointer; margin-top: 0.5rem; }
 </style>
 </head>
 <body>
-<header>📘 Электронный дневник</header>
-<div style="padding: 0.5rem;">
-  <button onclick="enableEdit()">Редактировать домашку</button>
-</div>
+<header>
+📘 Электронный дневник
+<button class="edit-btn" title="Редактировать домашку" onclick="promptPassword()">🖉</button>
+</header>
+
 <div class="days" id="days"></div>
 <div class="schedule" id="schedule"></div>
 
@@ -34,7 +36,7 @@ button { background: #4facfe; border: none; padding: 0.7rem 1.2rem; border-radiu
     <button class="close-btn" onclick="closeModal()">Закрыть</button>
     <h3 id="modalTitle"></h3>
     <textarea id="homework" placeholder="Домашнее задание"></textarea>
-    <button onclick="saveLesson()">Сохранить</button>
+    <button class="save-btn" onclick="saveLesson()">Сохранить</button>
   </div>
 </div>
 
@@ -42,7 +44,7 @@ button { background: #4facfe; border: none; padding: 0.7rem 1.2rem; border-radiu
 const GITHUB_TOKEN = "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";
 const REPO = "Romalakino/school-diary";
 const FILE_PATH = "dz.json";
-const EDIT_PASSWORD = "1234";
+const PASSWORD = "12345";
 
 const daysOfWeek = ["Понедельник","Вторник","Среда","Четверг","Пятница","Суббота"];
 let scheduleData = {};
@@ -50,6 +52,7 @@ let currentDay = daysOfWeek[0];
 let currentLessonIndex = null;
 let canEdit = false;
 
+// Загрузка данных
 async function loadData() {
   const res = await fetch(`https://raw.githubusercontent.com/${REPO}/main/${FILE_PATH}`);
   scheduleData = await res.json();
@@ -57,18 +60,20 @@ async function loadData() {
   renderSchedule();
 }
 
+// Отрисовка дней недели
 function renderDays() {
-  const daysContainer = document.getElementById("days");
-  daysContainer.innerHTML = "";
+  const container = document.getElementById("days");
+  container.innerHTML = "";
   daysOfWeek.forEach(day => {
     const div = document.createElement("div");
     div.className = "day" + (day===currentDay?" active":"");
     div.textContent = day;
     div.onclick = () => { currentDay = day; renderDays(); renderSchedule(); };
-    daysContainer.appendChild(div);
+    container.appendChild(div);
   });
 }
 
+// Отрисовка уроков
 function renderSchedule() {
   const container = document.getElementById("schedule");
   container.innerHTML = "";
@@ -81,12 +86,14 @@ function renderSchedule() {
   });
 }
 
-function enableEdit() {
+// Кнопка карандаш -> ввод пароля
+function promptPassword() {
   const pwd = prompt("Введите пароль для редактирования:");
-  if(pwd === EDIT_PASSWORD) { canEdit = true; alert("✅ Редактирование разблокировано!"); renderSchedule(); }
+  if(pwd === PASSWORD) { canEdit = true; alert("✅ Редактирование разблокировано!"); renderSchedule(); }
   else alert("❌ Неверный пароль!");
 }
 
+// Модальное окно для редактирования
 function openModal(index){
   currentLessonIndex = index;
   const lesson = scheduleData[currentDay][index];
@@ -97,6 +104,7 @@ function openModal(index){
 
 function closeModal(){ document.getElementById("modal").style.display = "none"; }
 
+// Сохранение домашки на GitHub
 async function saveLesson(){
   const lesson = scheduleData[currentDay][currentLessonIndex];
   lesson.homework = document.getElementById("homework").value;
