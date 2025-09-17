@@ -1,1 +1,51 @@
-{"homework": "Проверка связи"}
+{
+  "Понедельник": [
+    {"name": "Гос. язык Татарстан", "teacher": "Яруллина Г.Р.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "Родной русский", "teacher": "Валиуллина А.И.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "Химия", "teacher": "Юсупова А.Г.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "Английский язык", "teacher": "Кузнецова Н.В.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "География", "teacher": "Чеховская Е.П.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "Биология", "teacher": "Якупов Ч.Б.", "homework": "", "deadline": "", "grade": ""}
+  ],
+  "Вторник": [
+    {"name": "Гос. язык Татарстан", "teacher": "Яруллина Г.Р.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "Родной русский", "teacher": "Валиуллина А.И.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "Русский язык", "teacher": "Вагапова А.Р.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "Физика", "teacher": "Галимуллин Н.Р.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "Вероятность и статистика", "teacher": "Идиятуллина А.М.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "Химия", "teacher": "Юсупова А.Г.", "homework": "", "deadline": "", "grade": ""}
+  ],
+  "Среда": [
+    {"name": "История", "teacher": "Башкирова Л.М.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "Литература", "teacher": "Вагапова А.Р.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "Английский язык", "teacher": "Кузнецова Н.В.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "Алгебра", "teacher": "Идиятуллина А.М.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "Биология", "teacher": "Якупов Ч.Б.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "Геометрия", "teacher": "Идиятуллина А.М.", "homework": "", "deadline": "", "grade": ""}
+  ],
+  "Четверг": [
+    {"name": "Гос. язык Татарстан", "teacher": "Яруллина Г.Р.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "Родной русский", "teacher": "Валиуллина А.И.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "Русский язык", "teacher": "Вагапова А.Р.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "Английский язык", "teacher": "Кузнецова Н.В.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "Физика", "teacher": "Галимуллин Н.Р.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "Обществознание", "teacher": "Башкирова Л.М.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "География", "teacher": "Чеховская Е.П.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "Труд", "teacher": "Трусунов О.А. / Санто С.З.", "homework": "", "deadline": "", "grade": ""}
+  ],
+  "Пятница": [
+    {"name": "Литература", "teacher": "Вагапова А.Р.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "Русский язык", "teacher": "Вагапова А.Р.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "Физ-ра", "teacher": "Бегишев А.А.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "История", "teacher": "Башкирова Л.М.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "Алгебра", "teacher": "Идиятуллина А.М.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "Геометрия", "teacher": "Идиятуллина А.М.", "homework": "", "deadline": "", "grade": ""}
+  ],
+  "Суббота": [
+    {"name": "Музыка", "teacher": "Замалетдинова В.И.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "ОБЖ", "teacher": "Ахмедшин Р.Г.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "Алгебра", "teacher": "Идиятуллина А.М.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "Информатика", "teacher": "Галимуллин Н.Р.", "homework": "", "deadline": "", "grade": ""},
+    {"name": "Физ-ра", "teacher": "Бегишев А.А.", "homework": "", "deadline": "", "grade": ""}
+  ]
+}
