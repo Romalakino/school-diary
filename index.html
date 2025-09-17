@@ -1,92 +1,122 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Электронный дневник</title>
-  <style>
-    body { font-family: 'Inter', sans-serif; margin:0; background:#f4f7fb; color:#333; }
-    header { background: linear-gradient(135deg, #4facfe, #00f2fe); padding:1rem; text-align:center; color:white; font-size:1.5rem; font-weight:bold; }
-    .days { display:flex; overflow-x:auto; background:#fff; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
-    .day { min-width:120px; padding:0.7rem; text-align:center; font-weight:600; border-bottom:3px solid transparent; cursor:pointer; }
-    .day.active { border-bottom:3px solid #4facfe; color:#4facfe; }
-    .schedule { padding:1rem; }
-    .lesson { background:white; margin-bottom:0.7rem; padding:0.9rem; border-radius:12px; box-shadow:0 2px 5px rgba(0,0,0,0.1); cursor:pointer; }
-    .lesson h4 { margin:0 0 0.3rem 0; font-size:1rem; }
-    .lesson small { color:#666; }
-    .modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); display:none; justify-content:center; align-items:center; }
-    .modal-content { background:white; padding:1rem; border-radius:16px; width:90%; max-height:80%; overflow-y:auto; }
-    .modal-content h3 { margin-top:0; }
-    .close-btn { background:#f44336; color:white; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; float:right; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Электронный дневник</title>
+<style>
+body { font-family: 'Inter', sans-serif; margin: 0; background: #f4f7fb; color: #333; }
+header { background: linear-gradient(135deg, #4facfe, #00f2fe); padding: 1rem; text-align: center; color: white; font-size: 1.5rem; font-weight: bold; }
+.days { display: flex; overflow-x: auto; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+.day { min-width: 120px; padding: 0.7rem; text-align: center; font-weight: 600; border-bottom: 3px solid transparent; cursor: pointer; }
+.day.active { border-bottom: 3px solid #4facfe; color: #4facfe; }
+.schedule { padding: 1rem; }
+.lesson { background: white; margin-bottom: 0.7rem; padding: 0.9rem; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); cursor: pointer; }
+.lesson h4 { margin: 0 0 0.3rem 0; font-size: 1rem; }
+.lesson small { color: #666; }
+.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; }
+.modal-content { background: white; padding: 1rem; border-radius: 16px; width: 90%; max-height: 80%; overflow-y: auto; }
+input, textarea { width: 100%; padding: 0.5rem; margin: 0.5rem 0; border: 1px solid #ccc; border-radius: 8px; }
+.close-btn { background: #f44336; color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; float: right; }
+button { background: #4facfe; border: none; padding: 0.7rem 1.2rem; border-radius: 12px; color: white; font-weight: 600; cursor: pointer; margin: 0.3rem; }
+</style>
 </head>
 <body>
-  <header>📘 Электронный дневник</header>
-  <div class="days" id="days"></div>
-  <div class="schedule" id="schedule"></div>
+<header>📘 Электронный дневник</header>
+<div style="padding: 0.5rem;">
+  <button onclick="enableEdit()">Редактировать домашку</button>
+</div>
+<div class="days" id="days"></div>
+<div class="schedule" id="schedule"></div>
 
-  <div class="modal" id="modal">
-    <div class="modal-content">
-      <button class="close-btn" onclick="closeModal()">Закрыть</button>
-      <h3 id="modalTitle"></h3>
-      <p id="homeworkDisplay"></p>
-    </div>
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <button class="close-btn" onclick="closeModal()">Закрыть</button>
+    <h3 id="modalTitle"></h3>
+    <textarea id="homework" placeholder="Домашнее задание"></textarea>
+    <button onclick="saveLesson()">Сохранить</button>
   </div>
+</div>
 
-  <script>
-    const daysOfWeek = ["Понедельник","Вторник","Среда","Четверг","Пятница","Суббота"];
-    const dzUrl = "https://raw.githubusercontent.com/Romalakino/school-diary/main/dz.json";
-    let scheduleData = {};
-    let currentDay = daysOfWeek[0];
+<script>
+const GITHUB_TOKEN = "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";
+const REPO = "Romalakino/school-diary";
+const FILE_PATH = "dz.json";
+const EDIT_PASSWORD = "1234";
 
-    async function fetchSchedule() {
-      try {
-        const res = await fetch(dzUrl);
-        scheduleData = await res.json();
-        renderDays();
-        renderSchedule();
-      } catch(e) {
-        alert("Ошибка загрузки данных: " + e);
-      }
-    }
+const daysOfWeek = ["Понедельник","Вторник","Среда","Четверг","Пятница","Суббота"];
+let scheduleData = {};
+let currentDay = daysOfWeek[0];
+let currentLessonIndex = null;
+let canEdit = false;
 
-    function renderDays() {
-      const container = document.getElementById("days");
-      container.innerHTML = "";
-      daysOfWeek.forEach(day=>{
-        const div = document.createElement("div");
-        div.className = "day" + (day===currentDay?" active":"");
-        div.textContent = day;
-        div.onclick = ()=>{currentDay=day; renderDays(); renderSchedule();};
-        container.appendChild(div);
-      });
-    }
+async function loadData() {
+  const res = await fetch(`https://raw.githubusercontent.com/${REPO}/main/${FILE_PATH}`);
+  scheduleData = await res.json();
+  renderDays();
+  renderSchedule();
+}
 
-    function renderSchedule() {
-      const container = document.getElementById("schedule");
-      container.innerHTML = "";
-      if(!scheduleData[currentDay]) return;
-      scheduleData[currentDay].forEach((lesson,i)=>{
-        const div = document.createElement("div");
-        div.className = "lesson";
-        div.innerHTML = `<h4>${i+1}. ${lesson.name}</h4><small>${lesson.teacher||""}</small>`;
-        div.onclick = ()=>openModal(i);
-        container.appendChild(div);
-      });
-    }
+function renderDays() {
+  const daysContainer = document.getElementById("days");
+  daysContainer.innerHTML = "";
+  daysOfWeek.forEach(day => {
+    const div = document.createElement("div");
+    div.className = "day" + (day===currentDay?" active":"");
+    div.textContent = day;
+    div.onclick = () => { currentDay = day; renderDays(); renderSchedule(); };
+    daysContainer.appendChild(div);
+  });
+}
 
-    function openModal(index) {
-      const lesson = scheduleData[currentDay][index];
-      document.getElementById("modalTitle").textContent = lesson.name;
-      document.getElementById("homeworkDisplay").textContent = lesson.homework || "Домашка не задана";
-      document.getElementById("modal").style.display = "flex";
-    }
+function renderSchedule() {
+  const container = document.getElementById("schedule");
+  container.innerHTML = "";
+  scheduleData[currentDay].forEach((lesson,i)=>{
+    const div = document.createElement("div");
+    div.className = "lesson";
+    div.innerHTML = `<h4>${i+1}. ${lesson.name}</h4><small>${lesson.homework || "Домашнее задание не задано"}</small>`;
+    if(canEdit) div.onclick = ()=>openModal(i);
+    container.appendChild(div);
+  });
+}
 
-    function closeModal() {
-      document.getElementById("modal").style.display = "none";
-    }
+function enableEdit() {
+  const pwd = prompt("Введите пароль для редактирования:");
+  if(pwd === EDIT_PASSWORD) { canEdit = true; alert("✅ Редактирование разблокировано!"); renderSchedule(); }
+  else alert("❌ Неверный пароль!");
+}
 
-    fetchSchedule();
-  </script>
+function openModal(index){
+  currentLessonIndex = index;
+  const lesson = scheduleData[currentDay][index];
+  document.getElementById("modalTitle").textContent = lesson.name;
+  document.getElementById("homework").value = lesson.homework || "";
+  document.getElementById("modal").style.display = "flex";
+}
+
+function closeModal(){ document.getElementById("modal").style.display = "none"; }
+
+async function saveLesson(){
+  const lesson = scheduleData[currentDay][currentLessonIndex];
+  lesson.homework = document.getElementById("homework").value;
+
+  const url = `https://api.github.com/repos/${REPO}/contents/${FILE_PATH}`;
+  const r = await fetch(url, { headers: { Authorization: `token ${GITHUB_TOKEN}` } });
+  const sha = (await r.json()).sha;
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(scheduleData,null,2))));
+  
+  const res = await fetch(url, {
+    method: "PUT",
+    headers: { Authorization: `token ${GITHUB_TOKEN}` },
+    body: JSON.stringify({ message: `${currentDay} homework update`, content, sha })
+  });
+  
+  if(res.ok){ alert("✅ Домашка сохранена!"); closeModal(); renderSchedule(); }
+  else alert("❌ Ошибка сохранения!");
+}
+
+loadData();
+</script>
 </body>
 </html>
